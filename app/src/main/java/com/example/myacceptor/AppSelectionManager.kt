@@ -7,7 +7,7 @@ object AppSelectionManager {
 
     private const val KEY_PACKAGE = "selected_package"
     private const val KEY_BUTTON_NAME = "button_name"
-
+    private const val KEY_AMOUNT = "key_amount"
     private const val DEFAULT_BUTTON_NAME = "Roll"
 
     fun saveSelectedApp(context: Context, packageName: String) {
@@ -16,6 +16,18 @@ object AppSelectionManager {
         prefs.edit()
             .putString(KEY_PACKAGE, packageName)
             .apply()
+    }
+    fun saveSelectAmount(context: Context,pref_amount: Float){
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+
+        prefs.edit()
+            .putFloat(KEY_AMOUNT,pref_amount)
+            .apply()
+
+    }
+    fun getSelectAmount(context: Context): Float?{
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getFloat(KEY_AMOUNT,0f)
     }
 
     fun getSelectedApp(context: Context): String? {

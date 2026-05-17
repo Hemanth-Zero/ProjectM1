@@ -31,8 +31,12 @@ fun AppSelectorScreen(context: ComponentActivity) {
 
     val apps = remember {
         pm.getInstalledApplications(PackageManager.GET_META_DATA)
-            .filter { (it.flags and ApplicationInfo.FLAG_SYSTEM) == 0 }
-            .sortedBy { pm.getApplicationLabel(it).toString() }
+            .filter {
+                pm.getLaunchIntentForPackage(it.packageName) != null
+            }
+            .sortedBy {
+                pm.getApplicationLabel(it).toString()
+            }
     }
 
     var selectedApp by remember {
@@ -48,6 +52,18 @@ fun AppSelectorScreen(context: ComponentActivity) {
     var buttonName by remember {
         mutableStateOf(
             AppSelectionManager.getButtonName(context)
+        )
+    }
+
+    var useAmountFilter by remember {
+        mutableStateOf(false)
+    }
+
+    var amountText by remember {
+        mutableStateOf(
+            AppSelectionManager
+                .getSelectAmount(context)
+                ?.toString() ?: ""
         )
     }
 
@@ -79,7 +95,8 @@ fun AppSelectorScreen(context: ComponentActivity) {
                 .padding(16.dp)
         ) {
 
-            // Search Field
+            // ---------------- SEARCH ----------------
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -99,14 +116,17 @@ fun AppSelectorScreen(context: ComponentActivity) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Button Name Section
+            // ---------------- SETTINGS TITLE ----------------
+
             Text(
-                text = "Button Text",
+                text = "Automation Settings",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ---------------- BUTTON TEXT ----------------
 
             OutlinedTextField(
                 value = buttonName,
@@ -115,28 +135,90 @@ fun AppSelectorScreen(context: ComponentActivity) {
                 },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
-                    Text("Enter button text")
+                    Text("Example: Roll")
+                },
+                label = {
+                    Text("Button Text")
                 },
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ---------------- AMOUNT SWITCH ----------------
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    text = "Use Amount Filter",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Switch(
+                    checked = useAmountFilter,
+                    onCheckedChange = {
+                        useAmountFilter = it
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ---------------- AMOUNT FIELD ----------------
+
+            if (useAmountFilter) {
+
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = {
+                        amountText = it
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text("Enter minimum amount")
+                    },
+                    label = {
+                        Text("Amount")
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // ---------------- SAVE BUTTON ----------------
 
             Button(
                 onClick = {
+
                     AppSelectionManager.setButtonName(
                         context,
                         buttonName
                     )
+
+                    if (amountText.isNotBlank()) {
+
+                        AppSelectionManager.saveSelectAmount(
+                            context,
+                            amountText.toFloatOrNull() ?: 0f
+                        )
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Apply Button Name")
+                Text("Save Automation Settings")
             }
 
             Spacer(modifier = Modifier.height(20.dp))
+
+            // ---------------- APPS TITLE ----------------
 
             Text(
                 text = "Installed Apps (${filteredApps.size})",
@@ -145,6 +227,8 @@ fun AppSelectorScreen(context: ComponentActivity) {
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            // ---------------- APP LIST ----------------
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
