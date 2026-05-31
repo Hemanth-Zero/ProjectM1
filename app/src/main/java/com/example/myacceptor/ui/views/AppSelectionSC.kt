@@ -56,7 +56,9 @@ fun AppSelectorScreen(context: ComponentActivity) {
     }
 
     var useAmountFilter by remember {
-        mutableStateOf(false)
+        mutableStateOf(
+            AppSelectionManager.getAppOn(context)
+        )
     }
 
     var amountText by remember {
@@ -73,6 +75,12 @@ fun AppSelectorScreen(context: ComponentActivity) {
                 .toString()
                 .contains(searchQuery, ignoreCase = true)
         }
+    }
+
+    var appEnabled by remember {
+        mutableStateOf(
+            AppSelectionManager.getAppOn(context)
+        )
     }
 
     Scaffold(
@@ -94,7 +102,31 @@ fun AppSelectorScreen(context: ComponentActivity) {
                 .padding(padding)
                 .padding(16.dp)
         ) {
+            // ---------------- APP ENABLE SWITCH ----------------
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
+                Text(
+                    text = "Automation Enabled",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Switch(
+                    checked = appEnabled,
+                    onCheckedChange = {
+
+                        appEnabled = it
+
+                        AppSelectionManager.saveAppOn(
+                            context,
+                            it
+                        )
+                    }
+                )
+            }
             // ---------------- SEARCH ----------------
 
             OutlinedTextField(
@@ -163,6 +195,10 @@ fun AppSelectorScreen(context: ComponentActivity) {
                     checked = useAmountFilter,
                     onCheckedChange = {
                         useAmountFilter = it
+                        AppSelectionManager.saveMoneyOn(
+                            context,
+                            it
+                        )
                     }
                 )
             }

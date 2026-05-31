@@ -17,43 +17,48 @@ class ScreenReaderService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        //startReadingLoop()
-    }
-
-    private fun startReadingLoop() {
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                readScreen()
-                handler.postDelayed(this, 30000) // 1 minute
-            }
-        }, 30000)
     }
 
     private fun readScreen() {
         Handler(Looper.getMainLooper()).postDelayed({
-            val rootNode = rootInActiveWindow ?:return@postDelayed
-
+            val rootNode = rootInActiveWindow ?: return@postDelayed
             val ScreenAmout = getScreenAmount() ?: 0f
             val minAmount =
                 AppSelectionManager.getSelectAmount(this) ?: 0f
+            //Log.d(" Amout Values ", "${ScreenAmout} , ${minAmount} ")
 
-            if (ScreenAmout < minAmount) {
-                return@postDelayed
+            if(AppSelectionManager.getMoneyOn(this)) {
+                if (ScreenAmout > minAmount) {
+//                    val AmountClicked =
+//                        AutoClickHelper.findAndClickText(
+//                            rootNode,
+//                            targetText = ScreenAmout.toString()
+//                        )
+//                    if (!AmountClicked) {
+//                        Log.d("Amout", "Amount button not found")
+//                        return@postDelayed
+//                    }
+                    Log.d("money above"," clicked money button")
+                }else{
+                    Log.d("Amout", "Amount is less than limit")
+                    return@postDelayed
+                }
             }
-            val AmountClicked = AutoClickHelper.findAndClickText(rootNode, targetText = ScreenAmout.toString())
 
-            if(!AmountClicked){
-                Log.d("Amout","Amount button not found")
-                return@postDelayed
-            }
+//            Log.d("Final press ",
+//                "##########\n" + "ACCEPTED with  ${ScreenAmout} , ${minAmount} " + "\n##############")
+
             val clicked =
-                AutoClickHelper.findAndClickText(rootNode, AppSelectionManager.getButtonName(this))
+                AutoClickHelper.findAndClickText(
+                    rootNode,
+                    AppSelectionManager.getButtonName(this)
+                )
             if (clicked) {
                 Log.d("SERVICE", " button clicked")
             } else {
                 Log.d("SERVICE", "button not found")
             }
-        }, 250)
+        }, 10)
     }
 
     private fun extractText(node: AccessibilityNodeInfo, list: MutableList<String>) {
@@ -69,6 +74,10 @@ class ScreenReaderService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
+        if(!AppSelectionManager.getAppOn(this)){
+            Log.d("IsAppOn","App is off")
+            return
+        }
 
         val selectedApp = AppSelectionManager.getSelectedApp(this) ?: return
         val eventPackage = event.packageName?.toString() ?: return
@@ -76,12 +85,11 @@ class ScreenReaderService : AccessibilityService() {
         if (eventPackage != selectedApp) return
 
         val currentTime = System.currentTimeMillis()
-
         if (currentTime - lastHandledTime < EVENT_COOLDOWN) return
         lastHandledTime = currentTime
         Log.d("Event ", "Event is triggered")
         //printEntireScreen()
-        //readScreen()
+        readScreen()
     }
 
     private fun getScreenAmount(): Float? {
@@ -104,19 +112,18 @@ class ScreenReaderService : AccessibilityService() {
 
     private fun extractAmount(node: AccessibilityNodeInfo): Float? {
         val regex = Regex("₹\\s*(\\d+(?:\\.\\d+)?)")
-
+        var foundAmout = 0
         val text = node.text?.toString()
         if (!text.isNullOrBlank()) {
-            Log.d("SCREEN_READ", "TEXT: $text")
+            //Log.d("SCREEN_READ", "TEXT: $text")
             val match = regex.find(text)
             if (match != null) {
                 return match.groupValues[1].toFloatOrNull()
             }
         }
-
         val desc = node.contentDescription?.toString()
         if (!desc.isNullOrBlank()) {
-            Log.d("SCREEN_READ", "DESC: $desc")
+            //Log.d("SCREEN_READ", "DESC: $desc")
             val match = regex.find(desc)
             if (match != null) {
                 return match.groupValues[1].toFloatOrNull()
@@ -132,7 +139,6 @@ class ScreenReaderService : AccessibilityService() {
                 return result
             }
         }
-
         return null
     }
 //    private fun printEntireScreen() {

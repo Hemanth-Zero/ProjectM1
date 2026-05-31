@@ -7,6 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.ComponentName
+import android.content.Intent
+import android.provider.Settings
+import android.view.accessibility.AccessibilityManager
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,25 +24,54 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            if (!isAccessibilityEnabled()) {
+                openAccessibilitySettings()
+            }
             MyAcceptorTheme {
                 AppSelectorScreen(this)
             }
         }
     }
-}
+    private fun openAccessibilitySettings() {
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+        val intent = Intent(
+            Settings.ACTION_ACCESSIBILITY_SETTINGS
+        )
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyAcceptorTheme {
-        Greeting("Android")
+        startActivity(intent)
+    }
+    private fun isAccessibilityEnabled(): Boolean {
+
+        val accessibilityManager =
+            getSystemService(ACCESSIBILITY_SERVICE)
+                    as AccessibilityManager
+
+        val enabledServices =
+            accessibilityManager
+                .getEnabledAccessibilityServiceList(
+                    AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+                )
+
+        for (service in enabledServices) {
+
+            val enabledService =
+                service.resolveInfo.serviceInfo
+
+            val componentName = ComponentName(
+                this,
+                ScreenReaderService::class.java
+            )
+
+            if (
+                enabledService.packageName ==
+                componentName.packageName &&
+                enabledService.name ==
+                componentName.className
+            ) {
+                return true
+            }
+        }
+
+        return false
     }
 }

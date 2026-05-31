@@ -9,7 +9,28 @@ object AppSelectionManager {
     private const val KEY_BUTTON_NAME = "button_name"
     private const val KEY_AMOUNT = "key_amount"
     private const val DEFAULT_BUTTON_NAME = "Roll"
-
+    private const val APP_ON = "app_on"
+    private const val MONEY_ON = "money_on"
+    fun saveAppOn(context: Context , isappon: Boolean){
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(APP_ON,isappon)
+            .apply()
+    }
+    fun getAppOn(context: Context): Boolean{
+        val  prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(APP_ON,false)
+    }
+    fun saveMoneyOn(context: Context , isMoneyon: Boolean){
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean(MONEY_ON,isMoneyon)
+            .apply()
+    }
+    fun getMoneyOn(context: Context): Boolean{
+        val  prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(MONEY_ON,false)
+    }
     fun saveSelectedApp(context: Context, packageName: String) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
