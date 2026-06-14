@@ -83,6 +83,10 @@ fun AppSelectorScreen(context: ComponentActivity) {
         )
     }
 
+    var showLogs by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,9 +95,21 @@ fun AppSelectorScreen(context: ComponentActivity) {
                         "Select Application",
                         fontWeight = FontWeight.Bold
                     )
+                },
+                actions = {
+                    Button(
+                        onClick = {
+                            showLogs = true
+                        },
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("View Logs")
+                    }
                 }
             )
         }
+
     ) { padding ->
 
         Column(
@@ -102,6 +118,25 @@ fun AppSelectorScreen(context: ComponentActivity) {
                 .padding(padding)
                 .padding(16.dp)
         ) {
+            if (showLogs) {
+
+                LogViewerScreen(context, back = {showLogs = false})
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                Button(
+                    onClick = {
+                        showLogs = false
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Back To Settings")
+                }
+
+                return@Column
+            }
             // ---------------- APP ENABLE SWITCH ----------------
             Row(
                 modifier = Modifier.fillMaxWidth(),

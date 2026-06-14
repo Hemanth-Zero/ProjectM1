@@ -26,6 +26,7 @@ class ScreenReaderService : AccessibilityService() {
             val minAmount =
                 AppSelectionManager.getSelectAmount(this) ?: 0f
             //Log.d(" Amout Values ", "${ScreenAmout} , ${minAmount} ")
+            AppLogger.log(this,"${ScreenAmout} , ${minAmount} ","Detected")
 
             if(AppSelectionManager.getMoneyOn(this)) {
                 if (ScreenAmout > minAmount) {
@@ -38,15 +39,15 @@ class ScreenReaderService : AccessibilityService() {
 //                        Log.d("Amout", "Amount button not found")
 //                        return@postDelayed
 //                    }
-                    Log.d("money above"," clicked money button")
+                    //Log.d("money above"," clicked money button")
+                    //AppLogger.log(this,"clicked money button")
                 }else{
-                    Log.d("Amout", "Amount is less than limit")
+                    //Log.d("Amout", "Amount is less than limit")
+                    AppLogger.log(this,"Amount is less than limit","Amount")
                     return@postDelayed
                 }
             }
-
-//            Log.d("Final press ",
-//                "##########\n" + "ACCEPTED with  ${ScreenAmout} , ${minAmount} " + "\n##############")
+            AppLogger.log(this, "ACCEPTED with  ${ScreenAmout} , ${minAmount} " ,"Accepted ")
 
             val clicked =
                 AutoClickHelper.findAndClickText(
@@ -54,11 +55,11 @@ class ScreenReaderService : AccessibilityService() {
                     AppSelectionManager.getButtonName(this)
                 )
             if (clicked) {
-                Log.d("SERVICE", " button clicked")
+                AppLogger.log(this, "button clicked","Accepted")
             } else {
-                Log.d("SERVICE", "button not found")
+                AppLogger.log(this, "button not found","Accepted")
             }
-        }, 10)
+        }, 5)
     }
 
     private fun extractText(node: AccessibilityNodeInfo, list: MutableList<String>) {
@@ -70,7 +71,7 @@ class ScreenReaderService : AccessibilityService() {
             node.getChild(i)?.let { extractText(it, list) }
         }
     }
-    //Exit the app Go back to home screen
+
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
@@ -87,24 +88,24 @@ class ScreenReaderService : AccessibilityService() {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastHandledTime < EVENT_COOLDOWN) return
         lastHandledTime = currentTime
-        Log.d("Event ", "Event is triggered")
-        //printEntireScreen()
+        //Log.d( " Event ", "Event is triggered")
+        //AppLogger.log(this, "Event is triggered")
         readScreen()
     }
 
     private fun getScreenAmount(): Float? {
 
         val rootNode = rootInActiveWindow ?: run {
-            Log.d("SCREEN_READ", "No active window")
+            //Log.d("SCREEN_READ", "No active window")
             return null
         }
 
         val amount = extractAmount(rootNode)
 
         if (amount != null) {
-            Log.d("SCREEN_READ", "Detected Amount = ₹$amount")
+            //Log.d("SCREEN_READ", "Detected Amount = ₹$amount")
         } else {
-            Log.d("SCREEN_READ", "No amount found")
+            //Log.d("SCREEN_READ", "No amount found")
         }
 
         return amount
@@ -141,45 +142,6 @@ class ScreenReaderService : AccessibilityService() {
         }
         return null
     }
-//    private fun printEntireScreen() {
-//
-//        val rootNode = rootInActiveWindow ?: run {
-//            Log.d("SCREEN_READ", "No active window")
-//            return
-//        }
-//
-//        val allText = mutableListOf<String>()
-//
-//        extractAllText(rootNode, allText)
-//
-//        Log.d(
-//            "SCREEN_READ",
-//            "\n================ SCREEN CONTENT ================\n" +
-//                    allText.joinToString("\n") +
-//                    "\n================================================"
-//        )
-//    }
-//    private fun extractAllText(
-//        node: AccessibilityNodeInfo,
-//        list: MutableList<String>
-//    ) {
-//
-//        val text = node.text?.toString()
-//        val desc = node.contentDescription?.toString()
-//
-//        if (!text.isNullOrBlank()) {
-//            list.add("TEXT: $text")
-//        }
-//
-//        if (!desc.isNullOrBlank()) {
-//            list.add("DESC: $desc")
-//        }
-//
-//        for (i in 0 until node.childCount) {
-//            node.getChild(i)?.let {
-//                extractAllText(it, list)
-//            }
-//        }
-//    }
+
     override fun onInterrupt() {}
 }
