@@ -17,7 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myacceptor.ui.theme.MyAcceptorTheme
-import com.example.myacceptor.ui.views.AppSelectorScreen
+import com.example.myacceptor.ui.views.AppNavHost
+import com.example.myacceptor.ui.views.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 openAccessibilitySettings()
             }
             MyAcceptorTheme {
-                AppSelectorScreen(this)
+                MainContainer()
             }
         }
     }
@@ -73,5 +74,33 @@ class MainActivity : ComponentActivity() {
         }
 
         return false
+    }
+}
+@Composable
+fun MainContainer() {
+
+    val navController =
+        androidx.navigation.compose.rememberNavController()
+
+    androidx.compose.material3.Scaffold(
+
+        bottomBar = {
+            BottomNavigationBar(
+                navController
+            )
+        }
+
+    ) { padding ->
+
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+
+            AppNavHost(
+                navController
+            )
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myacceptor.ui.views
 
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +15,7 @@ import com.example.myacceptor.AppLogger
 
 @Composable
 fun LogViewerScreen(
-    context: ComponentActivity,
+    context: Context,
     back:()-> Unit
 ) {
 

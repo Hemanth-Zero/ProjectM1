@@ -26,7 +26,7 @@ class ScreenReaderService : AccessibilityService() {
             val minAmount =
                 AppSelectionManager.getSelectAmount(this) ?: 0f
             //Log.d(" Amout Values ", "${ScreenAmout} , ${minAmount} ")
-            AppLogger.log(this,"${ScreenAmout} , ${minAmount} ","Detected")
+            //AppLogger.log(this,"${ScreenAmout} , ${minAmount} ","Detected")
 
             if(AppSelectionManager.getMoneyOn(this)) {
                 if (ScreenAmout > minAmount) {
@@ -43,7 +43,7 @@ class ScreenReaderService : AccessibilityService() {
                     //AppLogger.log(this,"clicked money button")
                 }else{
                     //Log.d("Amout", "Amount is less than limit")
-                    AppLogger.log(this,"Amount is less than limit","Amount")
+                    AppLogger.log(this,"Amount is less than limit ${ScreenAmout}","Amount")
                     return@postDelayed
                 }
             }
@@ -59,7 +59,7 @@ class ScreenReaderService : AccessibilityService() {
             } else {
                 AppLogger.log(this, "button not found","Accepted")
             }
-        }, 5)
+        }, 10)
     }
 
     private fun extractText(node: AccessibilityNodeInfo, list: MutableList<String>) {
@@ -80,10 +80,10 @@ class ScreenReaderService : AccessibilityService() {
             return
         }
 
-        val selectedApp = AppSelectionManager.getSelectedApp(this) ?: return
+        val selectedApp = AppSelectionManager.getSelectedApps(this) ?: return
         val eventPackage = event.packageName?.toString() ?: return
 
-        if (eventPackage != selectedApp) return
+        if (eventPackage !in selectedApp) return
 
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastHandledTime < EVENT_COOLDOWN) return

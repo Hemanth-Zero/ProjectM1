@@ -48,6 +48,32 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    dependencies {
+
+        // Jetpack Compose BOM (manages all compose versions together)
+        implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+
+        // Core Compose UI
+        implementation("androidx.compose.ui:ui")
+        implementation("androidx.compose.ui:ui-graphics")
+        implementation("androidx.compose.ui:ui-tooling-preview")
+        implementation("androidx.compose.foundation:foundation")
+
+        // Material 3
+        implementation("androidx.compose.material3:material3")
+
+        // Material Icons Extended (needed for TwoWheeler, ElectricScooter, CommuteOutlined, etc.)
+        implementation("androidx.compose.material:material-icons-extended")
+
+        // Navigation Compose (NavHost, NavController, rememberNavController)
+        implementation("androidx.navigation:navigation-compose:2.7.7")
+
+        // Activity Compose (if using setContent in Activity)
+        implementation("androidx.activity:activity-compose:1.9.0")
+
+        // Compose Runtime (Composable, remember, mutableStateOf, etc.)
+        implementation("androidx.compose.runtime:runtime")
+    }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
