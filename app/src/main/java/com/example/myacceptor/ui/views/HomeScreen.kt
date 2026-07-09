@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myacceptor.AppSelectionManager
 
@@ -58,26 +59,23 @@ fun HomeScreen(
         }
 
         item {
-
             Card {
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(20.dp,20.dp),
 
                     horizontalArrangement =
                         Arrangement.SpaceBetween
                 ) {
-
-                    Text("Automation")
-
+                    Text("Automation" ,  style =
+                        MaterialTheme
+                            .typography
+                            .headlineSmall)
                     Switch(
                         checked = enabled,
                         onCheckedChange = {
-
                             enabled = it
-
                             AppSelectionManager
                                 .saveAppOn(
                                     context,
@@ -86,51 +84,51 @@ fun HomeScreen(
                         }
                     )
                 }
-            }
-            Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                ) {
+                if (enabled) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp,10.dp)
+                    ) {
+                        Text(
+                            "Button Text"
+                        )
 
-                Text(
-                    "Button Text"
-                )
+                        Spacer(
+                            modifier =
+                                Modifier.height(8.dp)
+                        )
 
-                Spacer(
-                    modifier =
-                        Modifier.height(8.dp)
-                )
+                        OutlinedTextField(
 
-                OutlinedTextField(
+                            value = buttonName,
 
-                    value = buttonName,
+                            onValueChange = {
 
-                    onValueChange = {
+                                buttonName = it
 
-                        buttonName = it
+                                AppSelectionManager
+                                    .setButtonName(
+                                        context,
+                                        it
+                                    )
+                            },
 
-                        AppSelectionManager
-                            .setButtonName(
-                                context,
-                                it
-                            )
-                    },
+                            modifier =
+                                Modifier.fillMaxWidth(),
 
-                    modifier =
-                        Modifier.fillMaxWidth(),
+                            singleLine = true,
 
-                    singleLine = true,
-
-                    placeholder = {
-                        Text("Roll")
+                            placeholder = {
+                                Text("Roll")
+                            }
+                        )
                     }
-                )
+                }
             }
         }
 
         item {
-
             DashboardCard(
                 title = "Apps Selected",
                 value = "${selectedApps.size}",
@@ -148,7 +146,6 @@ fun HomeScreen(
         }
 
         item {
-
             DashboardCard(
                 title = "Fare Limit",
                 value = "₹${amount.toInt()}",
@@ -166,10 +163,9 @@ fun HomeScreen(
         }
 
         item {
-
             DashboardCard(
-                title = "Logs",
-                value = "View",
+                title = "Total Earned",
+                value = "₹"+ AppSelectionManager.getEarnAmount(context),
                 icon = {
                     Icon(
                         Icons.Default.List,
@@ -177,9 +173,9 @@ fun HomeScreen(
                     )
                 }
             ) {
-                navController.navigate(
-                    Screen.Logs.route
-                )
+//                navController.navigate(
+//                    Screen.Logs.route
+//                )
             }
         }
     }

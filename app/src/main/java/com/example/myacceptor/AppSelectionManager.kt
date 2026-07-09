@@ -12,6 +12,8 @@ object AppSelectionManager {
 
     private const val KEY_AMOUNT = "key_amount"
 
+    private const val EARN_AMOUNT = "earn_amount"
+
     private const val APP_ON = "app_on"
 
     private const val MONEY_ON = "money_on"
@@ -155,6 +157,37 @@ object AppSelectionManager {
             )
             .getFloat(
                 KEY_AMOUNT,
+                0f
+            )
+    }
+
+    fun saveEarnAmount(
+        context: Context,
+        amount: Float
+    ) {
+
+        context.getSharedPreferences(
+            PREF_NAME,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putFloat(
+                EARN_AMOUNT,
+                amount
+            )
+            .apply()
+    }
+
+    fun getEarnAmount(
+        context: Context
+    ): Float {
+
+        return context
+            .getSharedPreferences(
+                PREF_NAME,
+                Context.MODE_PRIVATE
+            )
+            .getFloat(
+                EARN_AMOUNT,
                 0f
             )
     }

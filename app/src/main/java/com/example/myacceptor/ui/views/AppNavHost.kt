@@ -74,9 +74,8 @@ fun AppNavHost(
         composable(
             Screen.Logs.route
         ) {
-            LogsScreen(
-                navController,
-                context
+            LogViewerScreen(
+                context = context,
             )
         }
 
@@ -97,10 +96,10 @@ fun BottomNavigationBar(
 ) {
 
     val items = listOf(
-        Screen.Home,
-        Screen.Apps,
-        Screen.Fare,
         Screen.Logs,
+        Screen.Home,
+        //Screen.Apps,
+        //Screen.Fare,
         Screen.More
     )
 
@@ -113,22 +112,15 @@ fun BottomNavigationBar(
     NavigationBar {
 
         items.forEach { screen ->
-
             NavigationBarItem(
-
                 selected =
                     currentRoute == screen.route,
-
                 onClick = {
-
                     navController.navigate(
                         screen.route
                     ) {
-
                         launchSingleTop = true
-
                         restoreState = true
-
                         popUpTo(
                             navController
                                 .graph
@@ -138,30 +130,22 @@ fun BottomNavigationBar(
                         }
                     }
                 },
-
                 icon = {
 
                     Icon(
-
                         imageVector = when (screen) {
-
                             Screen.Home ->
                                 Icons.Default.Home
-
                             Screen.Apps ->
                                 Icons.Default.Apps
-
                             Screen.Fare ->
                                 Icons.Default.Tune
-
                             Screen.Logs ->
                                 Icons.Default.List
-
                             Screen.More ->
                                 Icons.Default.Menu
 
                         },
-
                         contentDescription =
                             screen.title
                     )

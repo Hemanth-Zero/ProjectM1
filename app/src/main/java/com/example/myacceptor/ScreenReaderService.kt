@@ -25,25 +25,13 @@ class ScreenReaderService : AccessibilityService() {
             val ScreenAmout = getScreenAmount() ?: 0f
             val minAmount =
                 AppSelectionManager.getSelectAmount(this) ?: 0f
-            //Log.d(" Amout Values ", "${ScreenAmout} , ${minAmount} ")
             //AppLogger.log(this,"${ScreenAmout} , ${minAmount} ","Detected")
 
             if(AppSelectionManager.getMoneyOn(this)) {
                 if (ScreenAmout > minAmount) {
-//                    val AmountClicked =
-//                        AutoClickHelper.findAndClickText(
-//                            rootNode,
-//                            targetText = ScreenAmout.toString()
-//                        )
-//                    if (!AmountClicked) {
-//                        Log.d("Amout", "Amount button not found")
-//                        return@postDelayed
-//                    }
-                    //Log.d("money above"," clicked money button")
-                    //AppLogger.log(this,"clicked money button")
+                    //pass
                 }else{
-                    //Log.d("Amout", "Amount is less than limit")
-                    AppLogger.log(this,"Amount is less than limit ${ScreenAmout}","Amount")
+                    //AppLogger.log(this,"Amount is less than limit ${ScreenAmout}","Amount")
                     return@postDelayed
                 }
             }
@@ -55,7 +43,10 @@ class ScreenReaderService : AccessibilityService() {
                     AppSelectionManager.getButtonName(this)
                 )
             if (clicked) {
-                AppLogger.log(this, "button clicked","Accepted")
+                var temp = AppSelectionManager.getEarnAmount(this) + ScreenAmout
+
+                AppLogger.log(this, "button clicked ${temp}","Confirmed")
+                AppSelectionManager.saveEarnAmount(this,temp)
             } else {
                 AppLogger.log(this, "button not found","Accepted")
             }
@@ -88,8 +79,6 @@ class ScreenReaderService : AccessibilityService() {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastHandledTime < EVENT_COOLDOWN) return
         lastHandledTime = currentTime
-        //Log.d( " Event ", "Event is triggered")
-        //AppLogger.log(this, "Event is triggered")
         readScreen()
     }
 

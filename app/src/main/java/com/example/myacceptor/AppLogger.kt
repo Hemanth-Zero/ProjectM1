@@ -41,12 +41,12 @@ object AppLogger {
                 }
 
         } catch (_: Exception) {
-            "No logs yet"
+            ""
         }
     }
 
     fun clearLogs(context: Context) {
-
+        AppSelectionManager.saveEarnAmount(context,0f)
         context.deleteFile(FILE_NAME)
     }
 }

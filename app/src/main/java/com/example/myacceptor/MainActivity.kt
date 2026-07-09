@@ -34,11 +34,9 @@ class MainActivity : ComponentActivity() {
         }
     }
     private fun openAccessibilitySettings() {
-
         val intent = Intent(
             Settings.ACTION_ACCESSIBILITY_SETTINGS
         )
-
         startActivity(intent)
     }
     private fun isAccessibilityEnabled(): Boolean {
@@ -78,26 +76,21 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 fun MainContainer() {
-
     val navController =
         androidx.navigation.compose.rememberNavController()
 
     androidx.compose.material3.Scaffold(
-
         bottomBar = {
             BottomNavigationBar(
                 navController
             )
         }
-
     ) { padding ->
-
         androidx.compose.foundation.layout.Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-
             AppNavHost(
                 navController
             )
