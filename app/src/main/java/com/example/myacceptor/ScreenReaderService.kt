@@ -6,7 +6,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import com.example.myacceptor.ui.AutoClickHelper
+import com.example.myacceptor.AutoClickHelper
 
 class ScreenReaderService : AccessibilityService() {
 

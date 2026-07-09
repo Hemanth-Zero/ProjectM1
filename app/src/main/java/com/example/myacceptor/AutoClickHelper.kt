@@ -1,4 +1,4 @@
-package com.example.myacceptor.ui
+package com.example.myacceptor
 
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
